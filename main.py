@@ -5,6 +5,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 
+from search_agent import search_courses
 
 def init_session():
     st.session_state["initialized"] = True;
@@ -15,7 +16,7 @@ def init_session():
     genai.configure(api_key=key);
 
 
-def fetch_ai_response(prompt, model="gemini-1.5-flash"):
+def fetch_llm_response(prompt, model="gemini-1.5-flash"):
     if "gemini" not in st.session_state:
         model = genai.GenerativeModel(model);
         chat = model.start_chat(history=list());
@@ -37,36 +38,24 @@ if "initialized" not in st.session_state:
     init_session();
 
 
-# TODO(grisha): do multiple chat sessions. database angle?
-#st.sidebar.title("Chat History")
-#for msg in st.session_state.messages:
-#    st.sidebar.write(f"**You:** {msg['user']}")
-#    st.sidebar.write(f"**AI:** {msg['model']}")
 
-st.title("AI is EVIL")
+st.title('Search ur shit')
 
-# Display chat messages with alignment
-for msg in st.session_state.messages:
-    col1, col2 = st.columns([1, 5], border=False);
-    with col1:
-        st.write("");
+col1, col2, col3 = st.columns([1, 1, 1], border=True)
 
-    with col2:
-        message = st.chat_message("user");
-        message.write(f"{msg['user']}");
+with col1:
+    platform = st.radio('Platform', ['Stepik', 'Coursera'])
 
-    col1, col2 = st.columns([5, 1], border=False);
+with col2:
+    course_name = st.text_input('Course name')
 
-    with col1:
-        message = st.chat_message("ai");
-        message.write(f"{msg['model']}");
+with col3:
+    search_courses = st.button('Search courses')
+    search_info = st.button('Search info')
 
-    with col2:
-        st.write("");
 
-st.divider();
-prompt = st.chat_input("Ask about anything")
-if prompt:
-    ai_response = fetch_ai_response(prompt);
-    st.session_state.messages.append({"user": prompt, "model": ai_response});
-    st.rerun();
+if search_courses and course_name and platform:
+    st.write(search_courses(course_name, platform))
+elif search_info and course_name and platform:
+    st.write('nah')
+
