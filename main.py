@@ -1,11 +1,11 @@
 import streamlit as st
-import asyncio
-import aiohttp
 import google.generativeai as genai
 from dotenv import load_dotenv
+from langchain_core.messages.human import HumanMessage
+from langchain_core.messages.ai import AIMessage
 import os
 
-from search_agent import search_courses
+from search_agent import search_courses_duck, get_course_info
 
 def init_session():
     st.session_state["initialized"] = True;
@@ -38,10 +38,10 @@ if "initialized" not in st.session_state:
     init_session();
 
 
-
+st.set_page_config(layout="wide")
 st.title('Search ur shit')
 
-col1, col2, col3 = st.columns([1, 1, 1], border=True)
+col1, col2, col3 = st.columns([1, 1, 1], border=False)
 
 with col1:
     platform = st.radio('Platform', ['Stepik', 'Coursera'])
@@ -53,9 +53,13 @@ with col3:
     search_courses = st.button('Search courses')
     search_info = st.button('Search info')
 
+if "answer" not in st.session_state:
+    st.session_state["answer"] = list()
 
 if search_courses and course_name and platform:
-    st.write(search_courses(course_name, platform))
+    response = search_courses_duck(course_name, platform)
+    st.write(response)
 elif search_info and course_name and platform:
-    st.write('nah')
+    response = get_course_info(course_name, platform)
+    st.write(response)
 
