@@ -5,7 +5,7 @@ from langchain_core.messages.human import HumanMessage
 from langchain_core.messages.ai import AIMessage
 import os
 
-from search_agent import search_courses_duck, get_course_info
+from search_agent import *
 
 def init_session():
     st.session_state["initialized"] = True;
@@ -39,9 +39,9 @@ if "initialized" not in st.session_state:
 
 
 st.set_page_config(layout="wide")
-st.title('Search ur shit')
+st.title('W courses')
 
-col1, col2, col3 = st.columns([1, 1, 1], border=False)
+col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 1, 1], border=False)
 
 with col1:
     platform = st.radio('Platform', ['Stepik', 'Coursera'])
@@ -53,13 +53,25 @@ with col3:
     search_courses = st.button('Search courses')
     search_info = st.button('Search info')
 
+with col4:
+    use_rag = st.checkbox('Use rag')
+
+with col5:
+    language = st.radio('Language', ['English', 'Русский'])
+
 if "answer" not in st.session_state:
     st.session_state["answer"] = list()
 
 if search_courses and course_name and platform:
-    response = search_courses_duck(course_name, platform)
-    st.write(response)
+    response = None
+    if use_rag:
+        response = search_courses_rag(course_name, platform)
+    else:
+        response = search_courses_duck(course_name, platform)
+
+    st.write(translate_text(response, language))
 elif search_info and course_name and platform:
-    response = get_course_info(course_name, platform)
-    st.write(response)
+    st.write('nah')
+
+
 
