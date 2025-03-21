@@ -38,14 +38,9 @@ Requirements:
 - Provide direct links to the courses, if possible.
 """
 
-load_dotenv()
-
 def create_rag_agent(platform_name: str):
-    load_dotenv();
     vector_store_path = "vector_store" + platform_name
     vector_store = None
-    login(os.getenv('HUGGING_FACE_TOKEN'))
-    print('logged in')
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model_kwargs = {'device': device}
     emb_model = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-small", model_kwargs=model_kwargs)
@@ -84,10 +79,10 @@ def create_rag_agent(platform_name: str):
         score_threshold=None
     )
 
-    llm = ChatGroq(model="llama3-70b-8192")
+    llm = ChatGroq(model="llama-3.3-70b-versatile")
     tool = create_retriever_tool(
         retriever,
-        platform_name+"retriever",
+        platform_name+" retriever",
         f"searches courses on a platform called {platform_name}"
     )
     return create_react_agent(llm, [tool])
@@ -112,8 +107,7 @@ def search_courses_rag(agent, criteria: dict) -> str:
 
 
 def create_search_agent():
-    load_dotenv()
-    llm = ChatGroq(model="llama3-70b-8192")
+    llm = ChatGroq(model="llama-3.3-70b-versatile")
     search = DuckDuckGoSearchRun()
     return create_react_agent(llm, [search])
 
@@ -137,7 +131,7 @@ def search_courses(agent, criteria: dict) -> str:
 
 
 def translate_text(text: str, target_language: str) -> str:
-    llm_for_translate = ChatGroq(model="llama3-70b-8192")
+    llm_for_translate = ChatGroq(model="llama-3.3-70b-versatile")
     prompt = f"Translate following text to {target_language}: \"{text}\""
     response = llm_for_translate.invoke(prompt)
     return response.content

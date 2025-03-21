@@ -3,16 +3,20 @@ import nest_asyncio
 from dotenv import load_dotenv
 import streamlit as st
 from audio_recorder_streamlit import audio_recorder
+from huggingface_hub import login
 
 from search_agent import *
 
 def init_session():
     load_dotenv();
-    st.session_state["initialized"] = True;
+    print('initializing')
+    login(os.getenv('HUGGING_FACE_TOKEN'))
 
     st.session_state.rag_stepik_agent = create_rag_agent('Stepik')
-    #st.session_state.rag_coursera_agent = create_rag_agent('Coursera')
+    st.session_state.rag_coursera_agent = create_rag_agent('Coursera')
     st.session_state.search_agent = create_search_agent()
+
+    st.session_state["initialized"] = True;
 
 
 if "initialized" not in st.session_state:
@@ -61,7 +65,7 @@ if search_courses_button and course_name and platform:
     if platform == 'Stepik':
         response = search_courses_rag(st.session_state.rag_stepik_agent, criteria)
     elif platform == 'Coursera':
-        response = search_courses(st.session_state.search_agent, criteria)
+        response = search_courses_rag(st.session_state.rag_coursera_agent, criteria)
     else:
         response = search_courses(st.session_state.search_agent, criteria)
 
