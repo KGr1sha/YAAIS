@@ -2,8 +2,7 @@ import os
 import nest_asyncio
 from dotenv import load_dotenv
 import streamlit as st
-from langchain_core.messages.human import HumanMessage
-from langchain_core.messages.ai import AIMessage
+from audio_recorder_streamlit import audio_recorder
 
 from search_agent import *
 
@@ -21,9 +20,9 @@ if "initialized" not in st.session_state:
 
 
 st.set_page_config(layout="wide")
-st.title('W courses')
+st.title('Course Finder')
 
-col1, col2, col3 = st.columns([2, 3, 1], border=False)
+col1, col2, col3 = st.columns([2, 4, 1], border=False)
 
 with col1:
     platform = st.radio('Platform', ['Stepik', 'Coursera', 'Other'])
@@ -31,7 +30,11 @@ with col1:
         platform = st.text_input('platform', label_visibility='collapsed')
 
 with col2:
-    course_name = st.text_input('Course name')
+    col2_1, col2_2 = st.columns([4, 1], border=False)
+    with col2_1:
+        course_name = st.text_input('Course name', label_visibility='collapsed')
+    with col2_2:
+        audio_course_name = audio_recorder(text='', icon_size='2x')
 
 with col3:
     search_courses_button = st.button('Search courses')
