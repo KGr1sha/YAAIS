@@ -69,7 +69,7 @@ def create_rag_agent(platform_name: str):
         split_documents = splitter.create_documents(text_contents)
         print(len(split_documents))
         vector_store = FAISS.from_documents(
-            split_documents[:100],
+            split_documents,
             emb_model
         )
         vector_store.save_local(vector_store_path)
