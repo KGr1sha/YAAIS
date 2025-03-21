@@ -48,7 +48,6 @@ def create_rag_agent(platform_name: str):
 
     if os.path.exists(vector_store_path):
         print(f"Loading existing vector store from {vector_store_path}")
-
         vector_store = FAISS.load_local(
             vector_store_path,
             emb_model,
@@ -88,7 +87,7 @@ def create_rag_agent(platform_name: str):
     return create_react_agent(llm, [tool])
 
 
-def search_courses_rag(agent, criteria: dict) -> str:
+def search_courses(agent, criteria: dict) -> str:
     result = agent.invoke({
         "messages": [{
             "role": "user",
@@ -110,25 +109,6 @@ def create_search_agent():
     llm = ChatGroq(model="llama-3.3-70b-versatile")
     search = DuckDuckGoSearchRun()
     return create_react_agent(llm, [search])
-
-
-def search_courses(agent, criteria: dict) -> str:
-    response = agent.invoke(
-        {"messages": [{
-            "role": "user",
-            "content": search_prompt.format(
-                topic=criteria['topic'],
-                platform=criteria['platform'],
-                cost=criteria['cost'],
-                difficulty=criteria['difficulty'],
-                rating=criteria['rating'],
-                duration=criteria['duration']
-            )
-        }]},
-        stream_mode="values"
-    )
-    return response['messages'][-1].content
-
 
 def translate_text(text: str, target_language: str) -> str:
     llm_for_translate = ChatGroq(model="llama-3.3-70b-versatile")

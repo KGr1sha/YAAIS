@@ -29,7 +29,7 @@ st.title('Course Finder')
 col1, col2, col3 = st.columns([2, 4, 1], border=False)
 
 with col1:
-    platform = st.radio('Platform', ['Stepik', 'Coursera', 'Other'])
+    platform = st.radio('Platform', ['Stepik', 'Coursera', 'Any', 'Other'])
     if platform == 'Other':
         platform = st.text_input('platform', label_visibility='collapsed')
 
@@ -61,11 +61,10 @@ criteria = {
 
 if search_courses_button and course_name and platform:
     response = None
-    nest_asyncio.apply()
     if platform == 'Stepik':
-        response = search_courses_rag(st.session_state.rag_stepik_agent, criteria)
+        response = search_courses(st.session_state.rag_stepik_agent, criteria)
     elif platform == 'Coursera':
-        response = search_courses_rag(st.session_state.rag_coursera_agent, criteria)
+        response = search_courses(st.session_state.rag_coursera_agent, criteria)
     else:
         response = search_courses(st.session_state.search_agent, criteria)
 
