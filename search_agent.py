@@ -41,12 +41,15 @@ Requirements:
 load_dotenv()
 
 def create_rag_agent(platform_name: str):
+    load_dotenv();
     vector_store_path = "vector_store" + platform_name
     vector_store = None
     login(os.getenv('HUGGING_FACE_TOKEN'))
+    print('logged in')
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model_kwargs = {'device': device}
     emb_model = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-small", model_kwargs=model_kwargs)
+    print('created model')
 
     if os.path.exists(vector_store_path):
         print(f"Loading existing vector store from {vector_store_path}")
@@ -61,6 +64,7 @@ def create_rag_agent(platform_name: str):
         loader = RecursiveUrlLoader(platforms[platform_name])
         docs = loader.load()
         text_contents = [doc.page_content for doc in docs]
+        print('loaded text contents')
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=500,
             chunk_overlap=100,
@@ -146,3 +150,5 @@ def get_course_info(agent, course_name: str, platform: str) -> str:
     })
     return response["messages"][-1].content
 
+if __name__ == '__main__':
+    c = create_rag_agent('Coursera')

@@ -11,7 +11,7 @@ def init_session():
     st.session_state["initialized"] = True;
 
     st.session_state.rag_stepik_agent = create_rag_agent('Stepik')
-    st.session_state.rag_coursera_agent = create_rag_agent('Coursera')
+    #st.session_state.rag_coursera_agent = create_rag_agent('Coursera')
     st.session_state.search_agent = create_search_agent()
 
 
@@ -61,7 +61,7 @@ if search_courses_button and course_name and platform:
     if platform == 'Stepik':
         response = search_courses_rag(st.session_state.rag_stepik_agent, criteria)
     elif platform == 'Coursera':
-        response = search_courses_rag(st.session_state.rag_coursera_agent, criteria)
+        response = search_courses(st.session_state.search_agent, criteria)
     else:
         response = search_courses(st.session_state.search_agent, criteria)
 
