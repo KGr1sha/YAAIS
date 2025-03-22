@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import asyncio
 from langchain_groq import ChatGroq
 from langchain_core.tools import tool
 from langchain_community.document_loaders import RecursiveUrlLoader
@@ -35,7 +34,8 @@ Please search the knowledge base and return a list of all courses that match the
 Requirements:
 - Include course titles and short descriptions.
 - Mention the course author or organization, if available.
-- Provide direct links to the courses, if possible.
+- Provide direct links to the courses.
+- Provide comprehencive course study plan.
 """
 
 def create_rag_agent(platform_name: str):
@@ -78,7 +78,7 @@ def create_rag_agent(platform_name: str):
         score_threshold=None
     )
 
-    llm = ChatGroq(model="llama-3.3-70b-versatile")
+    llm = ChatGroq(model="llama3-70b-8192")
     tool = create_retriever_tool(
         retriever,
         platform_name+" retriever",
@@ -106,12 +106,13 @@ def search_courses(agent, criteria: dict) -> str:
 
 
 def create_search_agent():
-    llm = ChatGroq(model="llama-3.3-70b-versatile")
+    llm = ChatGroq(model="llama3-70b-8192")
     search = DuckDuckGoSearchRun()
     return create_react_agent(llm, [search])
 
+
 def translate_text(text: str, target_language: str) -> str:
-    llm_for_translate = ChatGroq(model="llama-3.3-70b-versatile")
+    llm_for_translate = ChatGroq(model="llama3-8b-8192")
     prompt = f"Translate following text to {target_language}: \"{text}\""
     response = llm_for_translate.invoke(prompt)
     return response.content
